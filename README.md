@@ -1,5 +1,3 @@
-<img width="1603" height="935" alt="image" src="https://github.com/user-attachments/assets/8948c5ac-44bd-4763-b359-55651628138d" /># AutoReadme - Transform Your Code Into Professional Documentation in secs
-
 <div align="center">
 
 ![AutoReadme Logo](https://img.shields.io/badge/AutoReadme-AI%20Powered-blue?style=for-the-badge&logo=markdown)
