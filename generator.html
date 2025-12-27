@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>README Generator - AutoReadme</title>
+    <meta name="description" content="Generate professional README files in seconds using AI. Analyze your GitHub repository and create comprehensive documentation automatically.">
+    <link rel="stylesheet" href="landing.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-code"></i>
+                <a href="landing.html" style="color: inherit; text-decoration: none;">
+                    <span>AutoReadme</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="landing.html">Home</a>
+                <a href="landing.html#features">Features</a>
+                <a href="landing.html#how-it-works">How it Works</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Generator Section -->
+    <section class="generator-section">
+        <div class="container">
+            <div class="main-content">
+                <form id="readmeForm" class="form-container">
+                    <div class="form-section">
+                        <h2><i class="fas fa-upload"></i> Upload Your Project</h2>
+                        <div class="input-group">
+                            <label for="projectUpload">Select Project Folder</label>
+                            <div class="upload-area">
+                                <input type="file" id="projectUpload" multiple webkitdirectory required>
+                                <div class="upload-placeholder">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drop your project folder here or click to browse</p>
+                                    <span class="upload-hint">All files will be analyzed locally for comprehensive README generation</span>
+                                </div>
+                            </div>
+                            <div id="uploadedFiles" class="uploaded-files" style="display: none;"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2><i class="fas fa-bullseye"></i> Project Type</h2>
+                        <div class="purpose-grid">
+                            <label class="purpose-card">
+                                <input type="radio" name="purpose" value="personal" required>
+                                <div class="card-content">
+                                    <i class="fas fa-user"></i>
+                                    <h3>Personal/Hobby</h3>
+                                    <p>Side projects, learning experiments, and personal portfolio pieces</p>
+                                </div>
+                            </label>
+                            <label class="purpose-card">
+                                <input type="radio" name="purpose" value="hackathon" required>
+                                <div class="card-content">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <h3>Hackathon</h3>
+                                    <p>Competition projects showcasing innovation and rapid development</p>
+                                </div>
+                            </label>
+                            <label class="purpose-card">
+                                <input type="radio" name="purpose" value="academic" required>
+                                <div class="card-content">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <h3>Academic</h3>
+                                    <p>College assignments, research projects, and educational work</p>
+                                </div>
+                            </label>
+                            <label class="purpose-card">
+                                <input type="radio" name="purpose" value="freelance" required>
+                                <div class="card-content">
+                                    <i class="fas fa-briefcase"></i>
+                                    <h3>Client Work</h3>
+                                    <p>Professional solutions for client requirements and deliverables</p>
+                                </div>
+                            </label>
+                            <label class="purpose-card">
+                                <input type="radio" name="purpose" value="saas" required>
+                                <div class="card-content">
+                                    <i class="fas fa-rocket"></i>
+                                    <h3>SaaS Product</h3>
+                                    <p>Commercial applications focused on scalability and business value</p>
+                                </div>
+                            </label>
+                            <label class="purpose-card">
+                                <input type="radio" name="purpose" value="opensource" required>
+                                <div class="card-content">
+                                    <i class="fas fa-code-branch"></i>
+                                    <h3>Open Source</h3>
+                                    <p>Community-driven projects encouraging collaboration and contributions</p>
+                                </div>
+                            </label>
+                            <label class="purpose-card">
+                                <input type="radio" name="purpose" value="startup" required>
+                                <div class="card-content">
+                                    <i class="fas fa-chart-line"></i>
+                                    <h3>Startup MVP</h3>
+                                    <p>Early-stage products and minimum viable product demonstrations</p>
+                                </div>
+                            </label>
+                            <label class="purpose-card">
+                                <input type="radio" name="purpose" value="custom" required>
+                                <div class="card-content">
+                                    <i class="fas fa-cog"></i>
+                                    <h3>Custom</h3>
+                                    <p>Specialized projects with unique requirements and focus</p>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div id="customInput" class="custom-input" style="display: none;">
+                            <label for="customDescription">Describe your project's purpose and focus</label>
+                            <textarea id="customDescription" placeholder="Describe your project's main purpose, target audience, key problems it solves, unique features, business goals, technical challenges, or any specific focus points you want highlighted in the README..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2><i class="fas fa-list-check"></i> README Sections</h2>
+                        <div class="sections-grid">
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="demo" checked>
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-play-circle"></i>
+                                    <span>Live Demo & Screenshots</span>
+                                </div>
+                            </label>
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="features" checked>
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-star"></i>
+                                    <span>Key Features</span>
+                                </div>
+                            </label>
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="tech" checked>
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-code"></i>
+                                    <span>Tech Stack</span>
+                                </div>
+                            </label>
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="installation" checked>
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-download"></i>
+                                    <span>Quick Start Guide</span>
+                                </div>
+                            </label>
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="usage">
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-book-open"></i>
+                                    <span>Usage Examples</span>
+                                </div>
+                            </label>
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="api">
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-plug"></i>
+                                    <span>API Documentation</span>
+                                </div>
+                            </label>
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="architecture">
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-sitemap"></i>
+                                    <span>Architecture</span>
+                                </div>
+                            </label>
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="deployment">
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Deployment Guide</span>
+                                </div>
+                            </label>
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="performance">
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <span>Performance & Testing</span>
+                                </div>
+                            </label>
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="contributing" checked>
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-users"></i>
+                                    <span>Contributing</span>
+                                </div>
+                            </label>
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="roadmap">
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-road"></i>
+                                    <span>Roadmap & Future Plans</span>
+                                </div>
+                            </label>
+                            <label class="section-item">
+                                <input type="checkbox" name="sections" value="support">
+                                <span class="checkmark"></span>
+                                <div class="section-info">
+                                    <i class="fas fa-life-ring"></i>
+                                    <span>Support & Community</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="generate-btn">
+                        <i class="fas fa-magic"></i>
+                        <span>Generate Professional README</span>
+                        <div class="btn-loader" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                    </button>
+                </form>
+
+                <div id="output" class="output-section" style="display: none;">
+                    <div class="output-header">
+                        <h2><i class="fas fa-file-alt"></i> Generated README.md</h2>
+                        <div class="output-actions">
+                            <button id="copyBtn" class="action-btn">
+                                <i class="fas fa-copy"></i>
+                                Copy
+                            </button>
+                            <button id="downloadBtn" class="action-btn primary">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                    <div class="editor-container">
+                        <textarea id="readmeContent" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="brand-name">
+                        <i class="fas fa-code"></i>
+                        <span>AutoReadme</span>
+                    </div>
+                    <p>Generate high-quality README in secs</p>
+                </div>
+                <div class="footer-info">
+                
+                    <p>Built with ❤️ for developers</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="landing.js"></script>
+</body>
+</html>
