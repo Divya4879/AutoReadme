@@ -1194,7 +1194,7 @@ PURPOSE-SPECIFIC FOCUS:
 
 Generate a complete, production-ready README with proper markdown formatting, code blocks with language tags, ASCII directory trees, and --- section separators. Make it comprehensive enough to need only 5-10 minutes of customization. Return ONLY markdown content.`;
 
-    const apiKey = window.ENV?.GEMINI_API_KEY || 'AIzaSyD31nkxGXOf4IF2ZgTyXCXHx9uFliqiHnI';
+    const apiKey = window.ENV?.GEMINI_API_KEY || 'AIzaSyA86swxjcxISfP_szt7fmXc326Gr6LaJ6c';
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
