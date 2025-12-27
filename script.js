@@ -74,10 +74,11 @@ document.getElementById('projectUpload').addEventListener('change', function(e) 
     const uploadArea = document.querySelector('.upload-placeholder');
     
     if (files.length > 0) {
+        const projectName = files[0].webkitRelativePath ? files[0].webkitRelativePath.split('/')[0] : 'Selected files';
         uploadArea.innerHTML = `
             <i class="fas fa-check-circle" style="color: green; font-size: 2em;"></i>
             <p><strong>${files.length} files selected</strong></p>
-            <p>Project: ${files[0].webkitRelativePath.split('/')[0]}</p>
+            <p>Project: ${projectName}</p>
             <small>Click to change selection</small>
         `;
     } else {
