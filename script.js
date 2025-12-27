@@ -13,43 +13,127 @@ document.querySelectorAll('input[name="purpose"]').forEach(radio => {
 document.getElementById('readmeForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const repoUrl = document.getElementById('githubRepo').value;
-    const purpose = document.querySelector('input[name="purpose"]:checked').value;
+    const projectFiles = document.getElementById('projectUpload').files;
+    const purpose = document.querySelector('input[name="purpose"]:checked')?.value;
     const customDescription = document.getElementById('customDescription').value;
     const sections = Array.from(document.querySelectorAll('input[name="sections"]:checked')).map(cb => cb.value);
     
-    const { owner, repo } = extractRepoInfo(repoUrl);
+    if (!projectFiles.length) {
+        alert('Please select a project folder');
+        return;
+    }
+    
+    if (!purpose) {
+        alert('Please select a project purpose');
+        return;
+    }
     
     // Show loading state
     const submitBtn = document.querySelector('.generate-btn');
     const btnText = submitBtn.querySelector('span');
     const btnLoader = submitBtn.querySelector('.btn-loader');
     
-    btnText.style.display = 'none';
-    btnLoader.style.display = 'block';
-    submitBtn.disabled = true;
+    if (btnText) btnText.style.display = 'none';
+    if (btnLoader) btnLoader.style.display = 'block';
+    if (submitBtn) submitBtn.disabled = true;
     
     try {
-        // Fetch repository data
-        const repoData = await fetchRepoData(owner, repo);
+        // Process uploaded files
+        const projectData = await processUploadedFiles(projectFiles);
         
         // Generate AI-powered README
-        const readme = await generateSmartReadme(repoData, purpose, sections, customDescription);
+        const readme = await generateSmartReadme(projectData, purpose, sections, customDescription);
         
-        document.getElementById('readmeContent').value = readme;
-        document.getElementById('output').style.display = 'block';
+        const readmeContent = document.getElementById('readmeContent');
+        const output = document.getElementById('output');
         
-        // Scroll to output
-        document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+        if (readmeContent) readmeContent.value = readme;
+        if (output) {
+            output.style.display = 'block';
+            output.scrollIntoView({ behavior: 'smooth' });
+        }
         
     } catch (error) {
-        alert('Error analyzing repository: ' + error.message);
+        alert('Error processing project: ' + error.message);
     } finally {
-        btnText.style.display = 'block';
-        btnLoader.style.display = 'none';
-        submitBtn.disabled = false;
+        if (btnText) btnText.style.display = 'block';
+        if (btnLoader) btnLoader.style.display = 'none';
+        if (submitBtn) submitBtn.disabled = false;
     }
 });
+
+// Process uploaded files to extract project information
+async function processUploadedFiles(files) {
+    const projectData = {
+        name: 'Project',
+        description: '',
+        files: [],
+        languages: new Set(),
+        hasPackageJson: false,
+        hasRequirements: false,
+        hasDockerfile: false,
+        packageJsonContent: null,
+        requirementsContent: null
+    };
+    
+    for (const file of files) {
+        const fileName = file.name.toLowerCase();
+        const filePath = file.webkitRelativePath || file.name;
+        
+        // Extract project name from first folder
+        if (!projectData.name || projectData.name === 'Project') {
+            const pathParts = filePath.split('/');
+            if (pathParts.length > 1) {
+                projectData.name = pathParts[0];
+            }
+        }
+        
+        // Read package.json content
+        if (fileName === 'package.json') {
+            projectData.hasPackageJson = true;
+            try {
+                const text = await file.text();
+                projectData.packageJsonContent = JSON.parse(text);
+            } catch (e) {
+                console.warn('Could not parse package.json:', e);
+            }
+        }
+        
+        // Read requirements.txt content
+        if (fileName === 'requirements.txt') {
+            projectData.hasRequirements = true;
+            try {
+                projectData.requirementsContent = await file.text();
+            } catch (e) {
+                console.warn('Could not read requirements.txt:', e);
+            }
+        }
+        
+        // Detect file types and languages
+        if (fileName.endsWith('.js')) projectData.languages.add('JavaScript');
+        if (fileName.endsWith('.py')) projectData.languages.add('Python');
+        if (fileName.endsWith('.java')) projectData.languages.add('Java');
+        if (fileName.endsWith('.cpp') || fileName.endsWith('.c')) projectData.languages.add('C++');
+        if (fileName.endsWith('.html')) projectData.languages.add('HTML');
+        if (fileName.endsWith('.css')) projectData.languages.add('CSS');
+        if (fileName.endsWith('.php')) projectData.languages.add('PHP');
+        if (fileName.endsWith('.rb')) projectData.languages.add('Ruby');
+        if (fileName.endsWith('.go')) projectData.languages.add('Go');
+        if (fileName.endsWith('.rs')) projectData.languages.add('Rust');
+        
+        // Check for important files
+        if (fileName === 'dockerfile') projectData.hasDockerfile = true;
+        
+        projectData.files.push({
+            name: file.name,
+            path: filePath,
+            size: file.size
+        });
+    }
+    
+    projectData.languages = Array.from(projectData.languages);
+    return projectData;
+}
 
 // Copy functionality
 document.getElementById('copyBtn').addEventListener('click', async function() {
@@ -113,27 +197,25 @@ async function fetchRepoData(owner, repo) {
     return { repoInfo, languages, contents, fileContents };
 }
 
-async function generateSmartReadme(repoData, purpose, sections, customDescription = '') {
-    const { repoInfo, languages, contents, fileContents } = repoData;
+async function generateSmartReadme(projectData, purpose, sections, customDescription = '') {
+    const { name, languages, files, hasPackageJson, hasRequirements, hasDockerfile, packageJsonContent, requirementsContent } = projectData;
     
     const customContext = purpose === 'custom' && customDescription ? 
         `\nCustom Requirements: ${customDescription}` : '';
     
-    // Analyze actual repository structure
-    const hasTests = contents.some(f => f.name.toLowerCase().includes('test') || f.name.toLowerCase().includes('spec'));
-    const hasDocker = contents.some(f => f.name === 'Dockerfile');
-    const hasCI = contents.some(f => f.name === '.github');
-    const hasLicense = contents.some(f => f.name.toLowerCase().includes('license'));
+    // Analyze project structure
+    const hasTests = files.some(f => f.name.toLowerCase().includes('test') || f.name.toLowerCase().includes('spec'));
+    const hasCI = files.some(f => f.path.includes('.github') || f.path.includes('.gitlab-ci'));
+    const hasLicense = files.some(f => f.name.toLowerCase().includes('license'));
     
     // Extract actual dependencies and analyze project type
     let actualDependencies = '';
     let projectType = 'application';
     let frameworksUsed = [];
     
-    if (fileContents['package.json']) {
-        const pkg = JSON.parse(fileContents['package.json']);
-        const deps = Object.keys(pkg.dependencies || {});
-        const devDeps = Object.keys(pkg.devDependencies || {});
+    if (packageJsonContent) {
+        const deps = Object.keys(packageJsonContent.dependencies || {});
+        const devDeps = Object.keys(packageJsonContent.devDependencies || {});
         actualDependencies = `Dependencies: ${deps.join(', ')}\nDev Dependencies: ${devDeps.join(', ')}`;
         
         // Detect project type and frameworks
@@ -147,23 +229,56 @@ async function generateSmartReadme(repoData, purpose, sections, customDescriptio
         if (deps.includes('mysql') || deps.includes('mysql2')) frameworksUsed.push('MySQL');
         if (deps.includes('bcrypt')) frameworksUsed.push('bcrypt for authentication');
         if (deps.includes('cors')) frameworksUsed.push('CORS support');
+        if (deps.includes('socket.io')) frameworksUsed.push('Socket.IO');
+        if (deps.includes('axios')) frameworksUsed.push('Axios');
+        if (deps.includes('lodash')) frameworksUsed.push('Lodash');
+        if (deps.includes('moment')) frameworksUsed.push('Moment.js');
+        if (deps.includes('jwt') || deps.includes('jsonwebtoken')) frameworksUsed.push('JWT Authentication');
     }
     
-    const prompt = `Generate a comprehensive, professional README.md ONLY using actual repository data. DO NOT invent features or functionality.
+    if (requirementsContent && languages.includes('Python')) {
+        const pythonDeps = requirementsContent.split('\n').filter(line => line.trim() && !line.startsWith('#'));
+        actualDependencies += `\nPython Dependencies: ${pythonDeps.join(', ')}`;
+        
+        // Detect Python frameworks
+        if (pythonDeps.some(dep => dep.includes('django'))) { projectType = 'Django application'; frameworksUsed.push('Django'); }
+        if (pythonDeps.some(dep => dep.includes('flask'))) { projectType = 'Flask application'; frameworksUsed.push('Flask'); }
+        if (pythonDeps.some(dep => dep.includes('fastapi'))) { projectType = 'FastAPI application'; frameworksUsed.push('FastAPI'); }
+        if (pythonDeps.some(dep => dep.includes('numpy'))) frameworksUsed.push('NumPy');
+        if (pythonDeps.some(dep => dep.includes('pandas'))) frameworksUsed.push('Pandas');
+        if (pythonDeps.some(dep => dep.includes('tensorflow'))) frameworksUsed.push('TensorFlow');
+        if (pythonDeps.some(dep => dep.includes('pytorch'))) frameworksUsed.push('PyTorch');
+    }
+    
+    const prompt = `Generate a comprehensive, professional README.md ONLY using actual project data. DO NOT invent features or functionality.
 
-REPOSITORY ANALYSIS:
-- Name: ${repoInfo.name}
-- Description: ${repoInfo.description || 'No description provided'}
-- Languages: ${Object.keys(languages).join(', ')} (percentages: ${JSON.stringify(languages)})
+PROJECT ANALYSIS:
+- Name: ${name}
+- Languages: ${languages.join(', ')}
 - Project Type: ${projectType}
 - Frameworks/Libraries: ${frameworksUsed.join(', ') || 'None detected'}
-- Stars: ${repoInfo.stargazers_count || 0}
-- Forks: ${repoInfo.forks_count || 0}
-- Files: ${contents.map(f => f.name).slice(0, 20).join(', ')}
+- Files: ${files.slice(0, 20).map(f => f.name).join(', ')}
 - Has Tests: ${hasTests}
-- Has Docker: ${hasDocker}
+- Has Docker: ${hasDockerfile}
 - Has CI/CD: ${hasCI}
 - Has License: ${hasLicense}
+- Package Manager: ${hasPackageJson ? 'npm/yarn' : hasRequirements ? 'pip' : 'None detected'}
+${actualDependencies}${customContext}
+
+STRICT REQUIREMENTS:
+1. Base ALL content on actual project data
+2. Only mention features that exist in the codebase
+3. Use actual dependencies for tech stack
+4. Create realistic installation steps based on package managers found
+5. NO EMOJIS unless custom requirements specifically request them
+6. Make it ${purpose}-focused but accurate
+
+Generate sections:
+- Clean title
+- Compelling description based on actual project purpose
+- Features (inferred from actual files/dependencies)
+- Tech stack (actual languages/frameworks only)
+- Installation guide (based on actual package files)
 ${actualDependencies}${customContext}
 
 STRICT REQUIREMENTS:
