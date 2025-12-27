@@ -1,4 +1,4 @@
-# AutoReadme - AI-Powered README Generator
+<img width="1603" height="935" alt="image" src="https://github.com/user-attachments/assets/8948c5ac-44bd-4763-b359-55651628138d" /># AutoReadme - Transform Your Code Into Professional Documentation in secs
 
 <div align="center">
 
@@ -6,15 +6,17 @@
 
 **Transform your code into professional documentation instantly**
 
-[![Live Demo](https://img.shields.io/badge/🚀-Live%20Demo-success?style=for-the-badge)](https://your-netlify-url.netlify.app)
+[![Live Demo](https://img.shields.io/badge/🚀-Live%20Demo-success?style=for-the-badge)](https://autoreadme.netlify.app/)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=for-the-badge)](CONTRIBUTING.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
 </div>
 
+---
+
 ## 🎯 Overview
 
-AutoReadme is a cutting-edge web application that leverages Google's Gemini AI to automatically generate comprehensive, professional README files for your projects. Simply upload your project folder, and watch as AI analyzes your code structure, dependencies, and architecture to create production-ready documentation in seconds.
+AutoReadme is a cutting-edge web application that leverages Google's Gemini AI to automatically generate comprehensive, professional README files for your projects. Simply upload your project folder locally, and watch as AI analyzes your code structure, dependencies, and architecture to create production-ready documentation in seconds.
 
 ### ✨ Key Features
 
@@ -27,9 +29,15 @@ AutoReadme is a cutting-edge web application that leverages Google's Gemini AI t
 - **💾 Download Ready** - Export as markdown file
 - **🔒 Privacy First** - All processing happens client-side
 
+---
+
 ## 🚀 Live Demo
 
-Experience AutoReadme in action: **[Try Now →](https://your-netlify-url.netlify.app)**
+Experience AutoReadme in action: **[AutoReadme](https://autoreadme.netlify.app/)**
+
+<img width="1603" height="935" alt="image" src="https://github.com/user-attachments/assets/4c10a0b6-6b5f-4360-99f6-3075543a4b5a" />
+
+---
 
 ## 🛠️ Tech Stack
 
@@ -42,12 +50,13 @@ Experience AutoReadme in action: **[Try Now →](https://your-netlify-url.netlif
 
 ### AI Integration
 - **Google Gemini API** - Advanced language model for content generation
-- **Custom Prompts** - Tailored prompts for different project types
 
 ### Deployment
 - **Netlify** - Serverless deployment with environment variables
 - **Environment Variables** - Secure API key management
 - **Build Optimization** - Automated deployment pipeline
+
+---
 
 ## 📋 Supported Technologies
 
@@ -68,6 +77,8 @@ AutoReadme intelligently detects and documents:
 - Maven (pom.xml)
 - Gradle (build.gradle)
 
+---
+
 ## 🎯 Use Cases
 
 ### For Developers
@@ -82,18 +93,20 @@ AutoReadme intelligently detects and documents:
 - **Knowledge Transfer** - Comprehensive project understanding
 - **Maintenance** - Up-to-date project documentation
 
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Modern web browser (Chrome, Firefox, Safari, Edge)
 - Internet connection for AI processing
-- Project folder to analyze
+- Project folder(available locally) to analyze
 
-### Usage
+### User Flow
 
 1. **Visit the Application**
    ```
-   https://your-netlify-url.netlify.app
+   https://autoreadme.netlify.app
    ```
 
 2. **Upload Your Project**
@@ -110,6 +123,8 @@ AutoReadme intelligently detects and documents:
    - Click "Generate Professional README"
    - Review the generated content
    - Copy to clipboard or download as file
+
+---
 
 ## 🏗️ Project Structure
 
