@@ -18,6 +18,12 @@ document.getElementById('readmeForm').addEventListener('submit', async function(
     const customDescription = document.getElementById('customDescription').value;
     const sections = Array.from(document.querySelectorAll('input[name="sections"]:checked')).map(cb => cb.value);
     
+    console.log('Form submitted with:', { 
+        filesCount: projectFiles.length, 
+        purpose, 
+        sectionsCount: sections.length 
+    });
+    
     if (!projectFiles.length) {
         alert('Please select a project folder');
         return;
@@ -61,6 +67,43 @@ document.getElementById('readmeForm').addEventListener('submit', async function(
         if (submitBtn) submitBtn.disabled = false;
     }
 });
+
+// File upload feedback
+document.getElementById('projectUpload').addEventListener('change', function(e) {
+    const files = e.target.files;
+    const uploadArea = document.querySelector('.upload-placeholder');
+    
+    if (files.length > 0) {
+        uploadArea.innerHTML = `
+            <i class="fas fa-check-circle" style="color: green; font-size: 2em;"></i>
+            <p><strong>${files.length} files selected</strong></p>
+            <p>Project: ${files[0].webkitRelativePath.split('/')[0]}</p>
+            <small>Click to change selection</small>
+        `;
+    } else {
+        uploadArea.innerHTML = `
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p><strong>Click to select project folder</strong></p>
+            <p>Choose a folder containing your project files</p>
+            <small>Note: You need to select a folder, not individual files</small>
+        `;
+    }
+});
+
+// Make upload area clickable
+document.querySelector('.upload-area').addEventListener('click', function() {
+    document.getElementById('projectUpload').click();
+});
+
+// Prevent default drag behaviors
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    document.querySelector('.upload-area').addEventListener(eventName, preventDefaults, false);
+});
+
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
 
 // Process uploaded files to extract project information
 async function processUploadedFiles(files) {
