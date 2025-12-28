@@ -3,7 +3,7 @@
   publish = "."
 
 [build.environment]
-  SECRETS_SCAN_OMIT_PATHS = "env.js"
+  SECRETS_SCAN_ENABLED = "false"
 
 [[headers]]
   for = "/*"
