@@ -360,7 +360,9 @@ Make it professional, accurate, and engaging for ${purpose} context. Return ONLY
     });
     
     if (!response.ok) {
-        throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('API Error:', response.status, errorText);
+        throw new Error(`API Error: ${response.status} - Check API key permissions`);
     }
     
     const data = await response.json();
