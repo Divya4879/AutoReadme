@@ -1,4 +1,4 @@
-// Configuration - Replace with your actual API keys before deployment
+// Configuration - API key loaded from environment
 window.CONFIG = {
-    GEMINI_API_KEY: 'AIzaSyA86swxjcxISfP_szt7fmXc326Gr6LaJ6c'
+    GEMINI_API_KEY: window.ENV?.GEMINI_API_KEY
 };
